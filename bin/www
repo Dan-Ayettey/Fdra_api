@@ -19,8 +19,8 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
-
+const server = http.createServer(app);
+const {userModel,isValidPassword,getHashedPassword}=require('../models/userModel');
 /**
  * Listen on provided port, on all network interfaces.
  */
@@ -89,3 +89,5 @@ function onListening() {
   let bind = typeof addr === 'string'? 'pipe ' + addr : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+module.exports=server;

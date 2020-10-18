@@ -1,6 +1,7 @@
 /*
 dependencies
 */
+'use strict'
 const mongoose=require('mongoose');
 const {hashSync,compareSync}=require('bcrypt');
 const Schema=mongoose.Schema;

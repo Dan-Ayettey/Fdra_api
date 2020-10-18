@@ -1,6 +1,4 @@
 //dependencies
-const {errorHandler}=require("./configurations/auth/errorHandler");
-const createError = require('http-errors');
 const express = require('express');
 const logger = require('morgan');
 const usersRouter = require('./routes/users');
@@ -16,6 +14,7 @@ app.use(cors({origin:true}));
 // queuedLimit - max requests in queue until reject (-1 means do not reject)
 app.use(queue({activeLimit:2,queuedLimit:-1}));
 app.use(logger('dev'));
+const {error404Handler,error500Handler} = require("./errorHandler");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //cache controller
@@ -25,22 +24,6 @@ app.use((request,response,next)=>{
 });
 
 app.use('/',usersRouter);
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
-
-
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  err.option='Check url or method';
-  res.status(err.status || 500).json({error:err});
-
-});
-
+app.use(error404Handler);
+app.use(error404Handler);
 module.exports = app;

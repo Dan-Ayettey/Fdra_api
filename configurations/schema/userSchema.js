@@ -75,7 +75,7 @@ const {checkSchema,validationResult,body}=require('express-validator');
 });*/
 const schemaUpdate=body('id').isString().withMessage('id is Needed');
 const schemaGet=body('id').isString().withMessage('id is Needed');
-const schemaRenewPassword= [body('id').isString().withMessage('id is Needed'),
+const schemaRenewPassword=[body('id').isString().withMessage('id is Needed'),
     body('password').isString().withMessage('password is Needed')].filter(schema=>schema);
 const schemaDelete=body('id').isString().withMessage('id is Needed');
 const schemaCreate=checkSchema ({
