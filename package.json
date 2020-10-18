@@ -28,6 +28,7 @@
     "pug": "2.0.0-beta11"
   },
   "devDependencies": {
+    "accesscontrol": "^2.2.1",
     "express-jwt": "^6.0.0",
     "queue": "^6.0.1",
     "sequelize": "^6.3.5"

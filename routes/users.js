@@ -1,37 +1,32 @@
 //dependencies
 const express = require('express');
-const {authorize,admin}=require('../configurations/auth/authorize');
+const {grantAccess,allowIfLoggedIn}=require('../configurations/auth/grantAccess');
 const {secret}=require('../configurations/auth/user-secret.json');
-const {createUser,getUserById,
-    getUsers,authorizeUser,
-    deactivateUserById,
-    activateUserById,
-    updateUserById} = require("../controllers/userController");
+const {createUser,getUserById,getUsers,authorizeUser, deactivateUserById, activateUser, updateUserById,deleteUserById,
+    renewPasswordById,veryToken}= require("../controllers/userController");
 const {apiVer } = require("../controllers/versionController");
 const {withJWTAuthMiddleware}=require('express-kun');
-const {schemaUpdate, schemaDelete,schemaCreate,schemaGet,schemaAuth} = require("../configurations/schema/userSchema");
+const {schemaUpdate,schemaRenewPassword,schemaCreate,schemaGet,schemaAuth,schemaActivate} = require("../configurations/schema/userSchema");
 const router = express.Router();
-
-
-
 const protectedRouter=withJWTAuthMiddleware(router,secret);
-/* Routers */
 
-router.post('/v1/v1/managed_users',schemaCreate,authorize(admin),createUser);
-router.patch('/v1/managed_users/:id',schemaGet,authorize(admin),getUsers);
-protectedRouter.get('/v1/managed_users/',schemaGet,authorize(admin),getUsers);
-protectedRouter.get('/v1/managed_users/:id',schemaGet,authorize(admin),getUsers);
-protectedRouter.put('/v1/managed_users/:id',schemaGet,authorize(admin),activateUserById);
-protectedRouter.delete('/v1/managed_users/:id',schemaGet,authorize(admin),getUsers);
-
-router.post('/v1/users/auth',schemaAuth,authorizeUser);
+/* RoutersBasic role */
 router.post('/v1/users',schemaCreate,createUser);
-protectedRouter.get('/v1/users/:id',schemaGet,getUserById);
-protectedRouter.put('/v1/users/:id',schemaUpdate,updateUserById);
-protectedRouter.put('/v1/users/:id/renewed_password',schemaGet,updateUserById);
-protectedRouter.put('/v1/users/:id/deactivated_account',schemaUpdate,deactivateUserById);
+router.post('/v1/users/auth',schemaAuth,authorizeUser);
+router.use(veryToken);
+router.post('/v1/users/activated_account',schemaActivate,activateUser);
+protectedRouter.get('/v1/users/:id',[schemaGet,allowIfLoggedIn],getUserById);
+protectedRouter.put('/v1/users/:id',[schemaUpdate,allowIfLoggedIn],updateUserById);
+protectedRouter.put('/v1/users/:id/renewed_password',[schemaRenewPassword,allowIfLoggedIn],renewPasswordById);
+protectedRouter.put('/v1/users/:id/deactivated_account',[schemaUpdate,allowIfLoggedIn],deactivateUserById);
+
+//Administrator role
+protectedRouter.get('/v1/admins/managed_users/',allowIfLoggedIn,grantAccess('readAny','profile'),getUsers);
+protectedRouter.delete('/v1/admins/managed_users/:id',schemaGet,allowIfLoggedIn,grantAccess('deleteAny','profile'),deleteUserById);
+
 router.get('/v1/',apiVer);
 router.get('/',apiVer);
+
 //router.get('/v1/users/:id',getUserById);
 
 

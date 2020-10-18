@@ -1,7 +1,6 @@
 const {checkSchema,validationResult,body}=require('express-validator');
 
-
-const schemaCreate=checkSchema ({
+/*checkSchema ({
     email:{
         exists:true,
         isString:true,
@@ -10,6 +9,7 @@ const schemaCreate=checkSchema ({
         isEmpty:false,
         errorMessage:'Email field is needed'
     },
+
     password:{
         exists:true,
         isString:true,
@@ -40,13 +40,7 @@ const schemaCreate=checkSchema ({
         isString:true,
         errorMessage:'lastName field is needed'
     },
-    telephoneNumber:{
-        exists:true,
-        isInt:true,
-        in:["body","params"],
-        isEmpty:false,
-        errorMessage:'Telephone number field is needed'
-    },
+
     address:{
 
         in:["body","params"],
@@ -78,28 +72,120 @@ const schemaCreate=checkSchema ({
         isEmpty:false,
         errorMessage:'Role field is needed'
     }
-});
-const schemaUpdate=[body('id').not().isEmpty().withMessage('id isNeeded')];
-const schemaGet=[body('id').not().isEmpty().withMessage('id isNeeded')];
-const schemaDelete=[body('id').not().isEmpty().withMessage('id isNeeded')];
-const schemaAuth=checkSchema ({
+});*/
+const schemaUpdate=body('id').isString().withMessage('id is Needed');
+const schemaGet=body('id').isString().withMessage('id is Needed');
+const schemaRenewPassword= [body('id').isString().withMessage('id is Needed'),
+    body('password').isString().withMessage('password is Needed')].filter(schema=>schema);
+const schemaDelete=body('id').isString().withMessage('id is Needed');
+const schemaCreate=checkSchema ({
     email:{
-        in:['params','body'],
+        in:['body'],
         isEmail:true,
         isString:true,
         isInt:false,
         exists:{
-            errorMessage:' The param email is needed'
+            errorMessage:' The email is needed'
         }
     },
     password:{
-        in:['params','body'],
+        in:['body'],
         isString:true,
         isInt:false,
         exists:{
-            errorMessage:' The param email is needed'
+            errorMessage:' The password is needed'
         }
-    }
+    },
+    telephoneNumber:{
+        isString:true,
+        in:['body'],
+        isEmpty:false,
+        exists:{
+            errorMessage:' The telephoneNumber is needed'
+        }
+    },
+    firstName:{
+        isString:true,
+        in:['body'],
+        isEmpty:false,
+        exists:{
+            errorMessage:' The firstName is needed'
+        }
+    },
+    lastName:{
+        isString:true,
+        in:['body'],
+        isEmpty:false,
+        exists:{
+            errorMessage:' The lastName is needed'
+        }
+    },
+    tagName:{
+        isString:true,
+        in:['body'],
+        isEmpty:false,
+        exists:{
+            errorMessage:' The tagName is needed'
+        }
+    },
+    age:{
+        isInt:true,
+        in:['body'],
+        isEmpty:false,
+        exists:{
+            errorMessage:' The age is needed'
+        }
+    },
+
+});
+const schemaAuth=checkSchema ({
+    email:{
+        in:['body'],
+        isEmail:true,
+        isString:true,
+        isInt:false,
+        exists:{
+            errorMessage:' The email is needed'
+        }
+    },
+    password:{
+        in:['body'],
+        isString:true,
+        isInt:false,
+        exists:{
+            errorMessage:' The password is needed'
+        }
+    },
+    telephoneNumber:{
+        isString:true,
+        in:['body'],
+        isEmpty:false,
+        exists:{
+            errorMessage:' The telephoneNumber is needed'
+        }
+    },
+
+
+});
+const schemaActivate=checkSchema ({
+    email:{
+        in:['body'],
+        isEmail:true,
+        isString:true,
+        isInt:false,
+        exists:{
+            errorMessage:' The email is needed'
+        }
+    },
+    telephoneNumber:{
+        isString:true,
+        in:['body'],
+        exists:{
+            errorMessage:' The telephoneNumber is needed'
+        }
+    },
+
+
 });
 
 module.exports={
@@ -107,6 +193,8 @@ module.exports={
     schemaDelete,
     schemaUpdate,
     schemaAuth,
+    schemaRenewPassword,
+    schemaActivate,
     schemaGet,
     validationResult
 }

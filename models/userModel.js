@@ -2,13 +2,40 @@
 dependencies
 */
 const mongoose=require('mongoose');
-const {hashSync}=require('bcrypt');
+const {hashSync,compareSync}=require('bcrypt');
 const Schema=mongoose.Schema;
-
+// IsAvailable constructor
+function getIsAvailable(isAvailable){
+    return  isAvailable;
+}
+// IsAvailable constructor
+function getIsActive(isActive){
+    return  isActive;
+}
 // Password constructor
-function getPassword(password){
+function getHashedPassword(password){
     return  hashSync(password,8);
 }
+// Token constructor
+function getToken(token){
+    return  token;
+}
+function isValidPassword(data,encrypt){
+    return compareSync(data,encrypt);
+}
+// Date created constructor
+function getDateCreated(date){
+    return  date;
+}
+// Date updated
+function getDateUpdated(date){
+    return  date;
+}
+function getDateDeactivated(date){
+    return  date;
+}
+
+
 
 // mongoose user schema
 const UserSchema=new Schema({
@@ -21,10 +48,29 @@ const UserSchema=new Schema({
     password:{
         type:String,
         required:[true, 'Password field is needed'],
-        set:getPassword
+        set:getHashedPassword
     },
     firstName:{
         type:String,
+    },
+    tagName:{
+        type:String,
+    },
+    created_at:{
+        type:String,
+         set:getDateCreated
+    } ,
+    updated_at: {
+        type:String,
+        set:getDateUpdated
+    },
+    deactivated_at: {
+        type:String,
+        set:getDateDeactivated
+    },
+    activated_at: {
+        type:String,
+        set:getDateDeactivated
     },
     companyName:{
         type:String,
@@ -44,7 +90,6 @@ const UserSchema=new Schema({
     },
     telephoneNumber:{
         type:Number,
-        required:true
     },
     address:{
         type:String,
@@ -69,14 +114,26 @@ const UserSchema=new Schema({
         type:String,
     },
     _links:[],
-    isActive:Boolean,
-    role:{
+    isActive:{
+         type:Boolean,
+        set:getIsActive
+    },
+    isAvailable:{
+        type:Boolean,
+        set:getIsAvailable
+    },
+    role: {
+        type: String,
+        default: 'basic',
+        enum: ["basic", "supervisor", "admin"]
+    },
+    _token:{
          type:String,
-          required:[true,'Role field is needed']
+         set:getToken,
     }
 });
 
 //module
 const userModel=mongoose.model('user',UserSchema);
-module.exports={userModel};
+module.exports={userModel,isValidPassword,getHashedPassword};
 
