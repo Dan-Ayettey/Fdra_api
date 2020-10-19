@@ -24,7 +24,7 @@ const server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-mongoose.connect('mongodb://localhost/api_v1',{useNewUrlParser:true,useUnifiedTopology:true,useCreateIndex:true,useFindAndModify:true},(err)=>console.error.bind(console,err));
+mongoose.connect('mongodb://localhost/v1',{useNewUrlParser:true,useUnifiedTopology:true,useCreateIndex:true,useFindAndModify:true},(err)=>console.error.bind(console,err));
 mongoose.Promise=global.Promise;
 mongooseDB=mongoose.connection;
 mongooseDB.on('error',console.error.bind(console,'connection error'));
