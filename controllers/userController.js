@@ -54,15 +54,13 @@ if(errors.isEmpty()) {
     ];
     try {
         const find=await userModel.findOne({email});
-
         if(!find){
                 request.body.isActive = true;
                 request.body.isAvailable = true;
                 request.body.role=role||'basic';
-                request.body._token=jwt.sign({role,email,isActive:find.isActive},secret,{
+                request.body._token=jwt.sign({role,email,isActive:request.body.isActive},secret,{
                     expiresIn: '1d'
                 })
-
                 const user = await userModel.create(request.body);
                 response.status(201).json({
                     user,
@@ -73,8 +71,7 @@ if(errors.isEmpty()) {
             }
 
     } catch (e) {
-        next("The server can be reach at moment server code: 5341")
-        throw new Error(e);
+        next(e.message);
     }
 }else {
     response.status(400).json(errors);
@@ -83,6 +80,7 @@ if(errors.isEmpty()) {
 const grantAuthenticationWithAToken=async function (request){
     const {email,password,telephoneNumber}=request.body;
       const user=await userModel.findOne(({email}) || ({telephoneNumber}));
+      console.log(user)
         if(user){
             const isAvailable=isValidPassword(password,user.password) || telephoneNumber === user.telephoneNumber &&
                 email===user.email && user.isActive;
@@ -102,11 +100,14 @@ const grantAuthenticationWithAToken=async function (request){
     }
 const authorizeUser=async function (request,response){
     const errors=validationResult(request);
+    console.log(request)
     if(errors.isEmpty()) {
         const {user} = await grantAuthenticationWithAToken(request);
+
          if(user){
+
              if (user.isActive) {
-                 response.locals.loggedInUser = user;
+
                  response.status(200).json({user,isAuthorized:true});
              }else {
                  response.status(401).json({msg: 'Unauthorized', isAuthorized: user.isActive});
@@ -119,9 +120,11 @@ const authorizeUser=async function (request,response){
     }
 };
 const getUsers=async function (request,response){
+
+
     try {
-        await userModel.find({},(err,users)=>{
-            if(!err){
+         await userModel.find({},(err,users)=>{
+            if(!err){ response.locals.loggedInUser = users;
                 response.status(200).json({users,isAvailable:userModel.isAvailable});
             }else {
                 response.status(401).json({msg:'Unauthorized',...err,isAvailable:userModel.isAvailable});

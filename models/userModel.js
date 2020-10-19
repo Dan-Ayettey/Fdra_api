@@ -35,6 +35,9 @@ function getDateUpdated(date){
 function getDateDeactivated(date){
     return  date;
 }
+function getDateActivated(date){
+    return  date;
+}
 
 
 
@@ -71,7 +74,7 @@ const UserSchema=new Schema({
     },
     activated_at: {
         type:String,
-        set:getDateDeactivated
+        set:getDateActivated
     },
     companyName:{
         type:String,
