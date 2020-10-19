@@ -24,13 +24,8 @@
     "pg": "^8.4.1",
     "pg-hstore": "^2.3.3",
     "pgtools": "^0.3.0",
-<<<<<<< HEAD
     "pug": "^3.0.0",
-    "update": "^0.7.4",
     "updates": "^11.2.5"
-=======
-    "pug": "^3.0.0"
->>>>>>> 25588ea356a981a7093e3a69cf3a84ff1bae0547
   },
   "devDependencies": {
     "accesscontrol": "^2.2.1",
