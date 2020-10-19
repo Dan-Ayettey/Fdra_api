@@ -25,5 +25,5 @@ app.use((request,response,next)=>{
 
 app.use('/',usersRouter);
 app.use(error404Handler);
-app.use(error404Handler);
+app.use(error500Handler);
 module.exports = app;
