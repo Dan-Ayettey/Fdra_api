@@ -26,8 +26,4 @@ protectedRouter.delete('/v1/admins/managed_users/:id',schemaGet,allowIfLoggedIn,
 
 router.get('/v1/',apiVer);
 router.get('/',apiVer);
-
-//router.get('/v1/users/:id',getUserById);
-
-
 module.exports = router;

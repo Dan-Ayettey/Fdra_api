@@ -1,9 +1,11 @@
+//instances
 const {userModel,isValidPassword,getHashedPassword}=require('../models/userModel');
 const {secret}=require('../configurations/auth/user-secret.json');
 const jwt=require('jsonwebtoken');
+const stripe_key = "sk_test_4eC39HqLyjWDarjtT1zdp7dc"
+const stripe = require('stripe')(stripe_key);
 const {validationResult} = require("../configurations/schema/userSchema");
 //Set constructs or composites
-
 const createUser=async function (request,response,next){
  const errors=validationResult(request);
 
@@ -58,6 +60,13 @@ if(errors.isEmpty()) {
                 request.body.isActive = true;
                 request.body.isAvailable = true;
                 request.body.role=role||'basic';
+                request.body._customer_id= await stripe.customers.create(
+                    { email: email }
+                ).then((customer) =>{ return customer.id} ).then((customer)=>{return customer}).
+                catch((err) => {
+                    throw new Error(err);
+                });
+
                 request.body._token=jwt.sign({role,email,isActive:request.body.isActive},secret,{
                     expiresIn: '1d'
                 })
@@ -71,7 +80,8 @@ if(errors.isEmpty()) {
             }
 
     } catch (e) {
-        next(e.message);
+        next({error:e._message,msg:'might be server error'});
+        throw new Error(e.message);
     }
 }else {
     response.status(400).json(errors);
@@ -80,7 +90,6 @@ if(errors.isEmpty()) {
 const grantAuthenticationWithAToken=async function (request){
     const {email,password,telephoneNumber}=request.body;
       const user=await userModel.findOne(({email}) || ({telephoneNumber}));
-      console.log(user)
         if(user){
             const isAvailable=isValidPassword(password,user.password) || telephoneNumber === user.telephoneNumber &&
                 email===user.email && user.isActive;
@@ -100,7 +109,6 @@ const grantAuthenticationWithAToken=async function (request){
     }
 const authorizeUser=async function (request,response){
     const errors=validationResult(request);
-    console.log(request)
     if(errors.isEmpty()) {
         const {user} = await grantAuthenticationWithAToken(request);
 
@@ -119,7 +127,7 @@ const authorizeUser=async function (request,response){
         response.status(400).json(errors);
     }
 };
-const getUsers=async function (request,response){
+const getUsers=async function (request,response,next){
 
 
     try {
@@ -130,12 +138,12 @@ const getUsers=async function (request,response){
                 response.status(401).json({msg:'Unauthorized',...err,isAvailable:userModel.isAvailable});
             }
         });
-    }catch (err){
-        err.reason='Not found'
-        response.status(404).json(err);
+    }catch (e){
+        next({error:e._message,msg:'might be server error'});
+        throw new Error(e.message);
     }
 };
-const getUserById=async function (request,response){
+const getUserById=async function (request,response,next){
     const errors=validationResult(request);
     if(errors.isEmpty()) {
         const _id=request.body.id ? request.body.id:request.params.id;
@@ -151,15 +159,15 @@ const getUserById=async function (request,response){
             } else {
                 response.status(401).json({msg: 'Unauthorized', ...user, isAvailable: userModel.isAvailable});
             }
-        } catch (err) {
-            err.reason='Not found'
-            response.status(404).json(err);
+        } catch (e) {
+            next({error:e._message,msg:'might be server error'});
+            throw new Error(e.message);
         }
     }else {
         response.status(400).json(errors);
     }
 };
-const deactivateUserById= async function (request,response){
+const deactivateUserById= async function (request,response,next){
     const errors=validationResult(request);
     if(errors.isEmpty()) {
         request.body.deactivated_at=new Date();
@@ -180,15 +188,15 @@ const deactivateUserById= async function (request,response){
                 response.status(403).json({msg: 'Unauthorised to access the resource', isDeactivated:true});
             }
 
-        } catch (err) {
-            err.reason='Not found'
-            response.status(404).json(err);
+        } catch (e) {
+            next({error:e._message,msg:'might be server error'});
+            throw new Error(e.message);
         }
     }else {
         response.status(400).json(errors);
     }
 };
-const deleteUserById= async function (request,response){
+const deleteUserById= async function (request,response,next){
     const errors=validationResult(request);
     if(errors.isEmpty()) {
         const _id=request.body.id ? request.body.id:request.params.id;
@@ -201,15 +209,15 @@ const deleteUserById= async function (request,response){
             } else {
                 response.status(401).json({msg: 'Unauthorized', isDeleted:  false});
             }
-        } catch (err) {
-            err.reason='Not found'
-            response.status(404).json(err);
+        } catch (e) {
+            next({error:e._message,msg:'might be server error'});
+            throw new Error(e.message);
         }
     }else {
         response.status(400).json(errors);
     }
 };
-const activateUser= async function (request,response){
+const activateUser= async function (request,response,next){
     const errors=validationResult(request);
     if(errors.isEmpty()) {
         const {email,telephone}=request.body;
@@ -228,15 +236,15 @@ const activateUser= async function (request,response){
             } else {
                 response.status(401).json({msg: 'Unauthorized', isActive:  false});
             }
-        } catch (err) {
-            err.reason='Not found'
-            response.status(404).json(err);
+        } catch (e) {
+            next({error:e._message,msg:'might be server error'});
+            throw new Error(e.message);
         }
     }else {
         response.status(400).json(errors);
     }
 };
-const updateUserById=async function (request,response){
+const updateUserById=async function (request,response,next){
     const errors=validationResult(request);
     if(errors.isEmpty()) {
         request.body.updated_at=new Date();
@@ -254,9 +262,9 @@ const updateUserById=async function (request,response){
             } else {
                 response.status(401).json({msg: 'Unauthorized', ...user, isUpdated: false});
             }
-        } catch (err) {
-            err.reason='Not found'
-            response.status(404).json(err);
+        } catch (e) {
+            next({error:e._message,msg:'might be server error'});
+            throw new Error(e.message);
         }
 
 
@@ -264,7 +272,7 @@ const updateUserById=async function (request,response){
         response.status(400).json(errors);
     }
 };
-const renewPasswordById=async function (request,response){
+const renewPasswordById=async function (request,response,next){
     const errors=validationResult(request);
     if(errors.isEmpty()) {
         const {id,password}=request.body;
@@ -284,9 +292,9 @@ const renewPasswordById=async function (request,response){
             } else {
                 response.status(401).json({msg: 'Unauthorized', isActive:  false});
             }
-        } catch (err) {
-            err.reason='Not found'
-            response.status(404).json(err);
+        } catch (e) {
+            next({error:e._message,msg:'might be server error'});
+            throw new Error(e.message);
         }
     }else {
         response.status(400).json(errors);
@@ -306,8 +314,9 @@ const veryToken=async function (req, res, next){
             }else
             res.locals.loggedInUser = await userModel.findById(very.id);
             next();
-        }catch (err){
-                res.status(401).json({ error: err.message });
+        }catch (e){
+            next({error:e._message,msg:'might be server error'});
+            throw new Error(e.message);
         }
 
     } else {

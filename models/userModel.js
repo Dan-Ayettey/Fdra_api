@@ -2,6 +2,7 @@
 dependencies
 */
 'use strict'
+//instances
 const mongoose=require('mongoose');
 const {hashSync,compareSync}=require('bcrypt');
 const Schema=mongoose.Schema;
@@ -28,7 +29,7 @@ function isValidPassword(data,encrypt){
 function getDateCreated(date){
     return  date;
 }
-// Date updated
+// Date updated constructor
 function getDateUpdated(date){
     return  date;
 }
@@ -39,11 +40,17 @@ function getDateActivated(date){
     return  date;
 }
 
+//getStripe customer id
+const getCustomerId = function(id) {
+    return id
+};
 
-
-// mongoose user schema
 const UserSchema=new Schema({
-     _customerId:Schema.Types.ObjectId,
+     _customer_id:{
+         type:String,
+         unique: true,
+         set:getCustomerId,
+     },
     email:{
         type:String,
         unique:true,

@@ -1,6 +1,6 @@
 const {AccessControl} = require("accesscontrol");
 const access = new AccessControl();
-
+//Role model
 const roleModel = (function() {
     access.grant("basic")
         .readOwn("profile")
