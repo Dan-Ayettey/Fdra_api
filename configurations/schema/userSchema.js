@@ -1,92 +1,101 @@
-const {checkSchema,validationResult,body}=require('express-validator');
-
-/*checkSchema ({
-    email:{
-        exists:true,
-        isString:true,
-        isEmail:true,
-        in:["body","params"],
-        isEmpty:false,
-        errorMessage:'Email field is needed'
-    },
-
-    password:{
-        exists:true,
-        isString:true,
-        in:["body","params"],
-        isEmpty:false,
-        errorMessage:'Password field is needed'
-    },
-    firstName:{
-        in:["body","params"],
-        exists:true,
-        isString:true,
-        isEmpty:false,
-        errorMessage:'firstName field is needed'
-    },
-    dateOfBirth:{
-        in:["body","params"],
-        toDate:true,
-    },
-    age:{
-        in:["body","params"],
-        errorMessage:'Age field is needed'
-    },
-
-    lastName:{
-        in:["body","params"],
-        exists:true,
+const {checkSchema,validationResult}=require('express-validator');
+const schemaUpdate=checkSchema({
+    id:{
+        in:['body'],
         isEmpty:false,
         isString:true,
-        errorMessage:'lastName field is needed'
-    },
-
-    address:{
-
-        in:["body","params"],
-
-    },
-    postalCode:{
-        in:["body","params"]
-    },
-    apartmentNumber:{
-        in:["body","params"]
-    },
-    state:{
-        in:["body","params"]
-    },
-    countryCode:{
-        in:["body","params"]
-    },
-    country:{
-
-        in:["body","params"]
-    },
-    careOf:{
-        in:["body","params"]
-    },
-    role:{
         exists:true,
-        isString:true,
-        in:["body","params"],
-        isEmpty:false,
-        errorMessage:'Role field is needed'
+        errorMessage:'id is needed'
+
+
     }
-});*/
-const schemaUpdate=body('id').isString().withMessage('id is Needed');
-const schemaGet=body('id').isString().withMessage('id is Needed');
-const schemaRenewPassword=[body('id').isString().withMessage('id is Needed'),
-    body('password').isString().withMessage('password is Needed')].filter(schema=>schema);
-const schemaDelete=body('id').isString().withMessage('id is Needed');
+});
+const getCustomerByIdSchema=checkSchema({
+    id:{
+        in:["params","body"],
+        isString:true,
+        isEmpty:false,
+        exists:true,
+        errorMessage:'User id is needed'
+    }});
+const schemaGet=checkSchema({
+    id:{
+        in:['body'],
+        isEmpty:false,
+        isString:true,
+        exists:true,
+        errorMessage:'id is needed'
+
+
+    }
+});
+const schemaRenewPassword=checkSchema({
+    id:{
+        in:['body'],
+        isEmpty:false,
+        isString:true,
+        exists:true,
+        errorMessage:'id is needed'
+
+
+    },
+    password:{
+        in:['body'],
+        isEmpty:false,
+        isString:true,
+        exists:true,
+        errorMessage:'password is needed'
+
+
+    }
+});
+const  schemaRenewSecretMessage=checkSchema({
+    id:{
+        in:['body'],
+        isEmpty:false,
+        isString:true,
+        exists:true,
+        errorMessage:'id is needed'
+
+
+    },
+    secretMessage:{
+        in:['body'],
+        isEmpty:false,
+        isString:true,
+        exists:true,
+        errorMessage:'Secret message is needed'
+
+
+    }
+});
+const schemaDelete=checkSchema({
+    id:{
+        in:['body'],
+        isEmpty:false,
+        isString:true,
+        exists:true,
+        errorMessage:'id is needed'
+
+
+    }
+});
+
 const schemaCreate=checkSchema ({
     email:{
         in:['body'],
         isEmail:true,
         isString:true,
         isInt:false,
-        exists:{
+        exists:true,
             errorMessage:' The email is needed'
-        }
+
+    },
+    secretMessage:{
+        isString:true,
+        in:['body'],
+        exists:false,
+        errorMessage:' secret message is needed'
     },
     password:{
         in:['body'],
@@ -173,18 +182,29 @@ const schemaActivate=checkSchema ({
         isEmail:true,
         isString:true,
         isInt:false,
-        exists:{
-            errorMessage:' The email is needed'
-        }
+        exists:true,
+        isEmpty:false,
+        errorMessage:' The email is needed'
     },
     telephoneNumber:{
         isString:true,
         in:['body'],
-        exists:{
-            errorMessage:' The telephoneNumber is needed'
-        }
+        exists:true,
+        errorMessage:' The telephoneNumber is needed'
     },
-
+    password:{
+        isString:true,
+        in:['body'],
+        exists:false,
+        errorMessage:' The  password is needed'
+    },
+    secretMessage:{
+        isString:true,
+        in:['body'],
+        exists:false,
+        isEmpty:false,
+        errorMessage:' secret message is needed'
+    },
 
 });
 
@@ -193,8 +213,10 @@ module.exports={
     schemaDelete,
     schemaUpdate,
     schemaAuth,
+    schemaRenewSecretMessage,
     schemaRenewPassword,
     schemaActivate,
     schemaGet,
+    getCustomerByIdSchema,
     validationResult
-}
+};

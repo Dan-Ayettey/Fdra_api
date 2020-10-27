@@ -2,7 +2,7 @@ const version=require('../models/versionModel');
 
 //version route
 const apiVer=async function (request,response){
-    try {
+
         const versioning={
             "api_name": version.getApiNameSpace("localhost:3000"),
             "api_version": version.getApiVersion("1"),
@@ -10,11 +10,9 @@ const apiVer=async function (request,response){
             "api_documentation": version.getApiDocLink("https://v1.web.app/sprint/v1/docs"),
             "api_status": version.getApiStatus('isActive')
         };
-        response.status(200).json({versioning});
+        response.status(200).json(versioning);
 
-    }catch (e){
-        throw new Error(e.message);
-    }
+
 
 };
 module.exports={apiVer};

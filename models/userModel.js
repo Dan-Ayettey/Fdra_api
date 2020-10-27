@@ -1,7 +1,7 @@
 /*
 dependencies
 */
-'use strict'
+'use strict';
 //instances
 const mongoose=require('mongoose');
 const {hashSync,compareSync}=require('bcrypt');
@@ -42,18 +42,48 @@ function getDateActivated(date){
 
 //getStripe customer id
 const getCustomerId = function(id) {
-    return id
+    return id;
 };
+const CustomerModelSchema=new Schema({
+    email:{
+        type:String,
+        unique:true,
+        exists:true,
+        isEmail:true,
+        isEmpty:false,
+        required:[true, 'Email id is required'],
 
+    },
+    telephoneNumber:{
+        type:String,
+        unique:true,
+        exists:true,
+        required:[true, 'Telephone number is required'],
+
+    },
+    customer:{
+        type:Array,
+        required:[true, 'Customer field is required'],
+    },
+    _user_id:{
+        type:String,
+        unique:true,
+        exists:true,
+        required:[true, 'user id is required'],
+    }
+
+});
 const UserSchema=new Schema({
      _customer_id:{
          type:String,
          unique: true,
+         immutable:true,
          set:getCustomerId,
      },
     email:{
         type:String,
-        unique:true,
+        unique: true,
+        immutable:true,
         required:[true, 'Email field is needed']
     },
     password:{
@@ -102,28 +132,11 @@ const UserSchema=new Schema({
     telephoneNumber:{
         type:Number,
     },
-    address:{
-        type:String,
 
+    address:{
+        type:Array,
     },
-    postalCode:{
-        type:Number,
-    },
-    apartmentNumber:{
-        type:String,
-    },
-    state:{
-        type:String
-    },
-    countryCode:{
-        type:Number,
-    },
-    country:{
-        type:String,
-    },
-    careOf:{
-        type:String,
-    },
+
     _links:[],
     isActive:{
          type:Boolean,
@@ -132,6 +145,11 @@ const UserSchema=new Schema({
     isAvailable:{
         type:Boolean,
         set:getIsAvailable
+    },
+    secretMessage:{
+        type: String,
+        required:true,
+        set:getHashedPassword
     },
     role: {
         type: String,
@@ -145,6 +163,7 @@ const UserSchema=new Schema({
 });
 
 //module
-const userModel=mongoose.model('user',UserSchema);
-module.exports={userModel,isValidPassword,getHashedPassword};
+const userModel=mongoose.model('User',UserSchema);
+const customerModel=mongoose.model('Customer',CustomerModelSchema);
+module.exports={userModel,isValidPassword,getHashedPassword,customerModel};
 

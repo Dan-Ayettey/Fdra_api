@@ -1,11 +1,9 @@
-const {Stripe}=require('stripe');
-
-var stripeFire = require("stripe-fire")(stripe_key);
+//dependencies
 const bodyParser=require('body-parser');
 const express=require('express');
 const app=express();
 const stripe_key = "sk_test_4eC39HqLyjWDarjtT1zdp7dc"
-var stripe = require('stripe')(stripe_key);
+const stripe = require('stripe')(stripe_key);
  const newCustomer =async function(req, res) {
     var body = req.body
     await stripe.customers.create(

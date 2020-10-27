@@ -1,4 +1,4 @@
-const { roles } = require('../../models/roleModel')
+const { roles } = require('../../models/roleModel');
 
 const grantAccess = function(action, resource) {
     return async (req, res, next) => {
@@ -11,12 +11,12 @@ const grantAccess = function(action, resource) {
                     error: "You don't have enough permission to perform this action"
                 });
             }
-            next()
+            next();
         } catch (error) {
-            next(error)
+            next(error);
         }
-    }
-}
+    };
+};
 
 const allowIfLoggedIn = async (req, res, next) => {
 
@@ -31,9 +31,9 @@ const allowIfLoggedIn = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-}
+};
 
 module.exports={
     allowIfLoggedIn,
     grantAccess,
-}
+};

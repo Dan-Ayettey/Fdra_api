@@ -49,12 +49,36 @@ const cardPaymentSchema=new mongoose.Schema({
 
 
 });
+const proxyPayment=new mongoose.Schema({
+    intent: {
+        type: String,
+    },
+    purchase_units: {
+        type: [],
+        required: [true, 'purchase_units amount is required']
+    },
 
+    returnURL: {
+        type: String
+    },
+    country: {
+        types: String
+    },
+    statementDescriptor: {
+        type: String
+    },
+    customer_id: {
+        type: String,
+        required: [true, 'Customer is required']
+    },
+
+});
 
 //module
 const cardPaymentModel=mongoose.model('cardPayment',cardPaymentSchema);
 
 module.exports={
     cardPaymentModel,
-}
+    proxyPayment
+};
 

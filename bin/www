@@ -8,6 +8,8 @@ const app = require('../app');
 const debug = require('debug')('api:server');
 const http = require('http');
 
+
+
 /**
  * Get port from environment and store in Express.
  */
@@ -24,11 +26,11 @@ const server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-mongoose.connect('mongodb://localhost:27017/v1',{useNewUrlParser:true,useUnifiedTopology:true,useCreateIndex:true,useFindAndModify:true},(err) => {
-  if (!err) {
-    console.log('Successfully Connected in MongoDB')
+mongoose.connect('mongodb://localhost:27017/v1',{useNewUrlParser:true,useUnifiedTopology:true,useCreateIndex:true,useFindAndModify:false},(err) => {
+  console.log(process.env.SECRETJWT) ;  if (!err){
+    console.log('Successfully Connected in MongoDB');
   } else {
-    console.log('Syntax Error: ' + err)
+    console.log('Syntax Error: ' + err);
   }});
 mongoose.Promise=global.Promise;
 mongooseDB=mongoose.connection;
