@@ -27,7 +27,7 @@ const server = http.createServer(app);
  */
 
 mongoose.connect('mongodb://localhost/v1',{useNewUrlParser:true,useUnifiedTopology:true,useCreateIndex:true,useFindAndModify:false},(err) => {
-  console.log(process.env.SECRETJWT) ;  if (!err){
+  if (!err){
     console.log('Successfully Connected in MongoDB');
   } else {
     console.log('Syntax Error: ' + err);
@@ -71,12 +71,12 @@ function onError(error) {
   const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
   // handle specific listen errors with friendly messages
-  switch (error.code) {
+  switch (error) {
     case 'EACCES':
       console.error.bind(bind + ' requires elevated privileges');
       process.exit(1);
       break;
-    case 'EADDRINUSE':
+    case error.code:
       console.error.bind(bind + ' is already in use');
       process.exit(1);
       break;
